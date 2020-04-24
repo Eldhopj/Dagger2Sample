@@ -6,4 +6,6 @@ import dagger.Component;
 @Component // Component creates and stores our object and provides to us
 public interface CarComponent {
     Car getCar(); // PROVISION METHODS
+
+    void inject(MainActivity mainActivity); // For field injection
 }

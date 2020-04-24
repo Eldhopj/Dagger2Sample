@@ -10,7 +10,7 @@ public class Car {
     private Engine engine;
     private Wheels wheels;
 
-    // Car shouldn't responsible for making this dependency , it will pass into it via constructor
+    // Car shouldn't responsible for making this objects (Engine and Wheels) , it will pass into it via constructor
 
     //CONSTRUCTOR INJECTION
     //NOTE : can only one constructor to be annotated with @Inject
