@@ -2,6 +2,7 @@ package com.eldhopj.dagger2sample;
 
 import android.util.Log;
 
+import com.eldhopj.dagger2sample.engine.Engine;
 import com.eldhopj.dagger2sample.wheel.Wheels;
 
 import javax.inject.Inject;
