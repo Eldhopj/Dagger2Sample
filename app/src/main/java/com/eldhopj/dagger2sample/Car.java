@@ -2,6 +2,8 @@ package com.eldhopj.dagger2sample;
 
 import android.util.Log;
 
+import com.eldhopj.dagger2sample.wheel.Wheels;
+
 import javax.inject.Inject;
 
 public class Car {

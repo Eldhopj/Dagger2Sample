@@ -4,10 +4,19 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.eldhopj.dagger2sample.intermedator.CarComponent;
+
 import javax.inject.Inject;
 
 public class MainActivity extends AppCompatActivity {
-    /**Commit 1 :  COMPONENT - > CarComponent, PROVISION METHODS - > CarComponent , CONSTRUCTOR INJECTION -> Car*/
+    /**
+     * COMPONENT - > CarComponent, PROVISION METHODS - > CarComponent , CONSTRUCTOR INJECTION -> Car
+     * Field Injection :
+     * Field injection is mainly in places where we cant do constructor injection like activities, BroadcastReceivers and fragments
+     * Module and Provides method :
+     * Modules and provides method is used when we cant create constructor or any think like getting object of an external libs,
+     * So we create object in Module class with the help of provides method (WheelsModule.class), and add module into Component class
+     */
 
     @Inject
     Car car; // Field Injection, this variable cannot be private
