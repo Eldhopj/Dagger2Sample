@@ -1,4 +1,4 @@
-package com.eldhopj.dagger2sample.intermedator.engineModules;
+package com.eldhopj.dagger2sample.provider.engineModules;
 
 import com.eldhopj.dagger2sample.engine.DieselEngine;
 import com.eldhopj.dagger2sample.engine.Engine;
@@ -14,5 +14,6 @@ public abstract class DieselEngineModule {
 
     @Binds // Binds provides more performance than @Provides method
     // NOTE : @Binds methods must have exactly one parameter ( No 2 params or 0 params), whose type is assignable to the return type
+    // NOTE : @Binds doesn't support any config changes, ie we cant pass value (Check PetrolEngine)
     abstract Engine bindEngine(DieselEngine engine);
 }

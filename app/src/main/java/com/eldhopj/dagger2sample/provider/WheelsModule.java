@@ -1,4 +1,4 @@
-package com.eldhopj.dagger2sample.intermedator;
+package com.eldhopj.dagger2sample.provider;
 
 import com.eldhopj.dagger2sample.wheel.Rims;
 import com.eldhopj.dagger2sample.wheel.Tires;
@@ -9,7 +9,7 @@ import dagger.Provides;
 
 //Module class is used to create object, where we cannot use constructor injection
 @Module
-public class WheelsModule {
+public abstract class WheelsModule { // NOTE : Only make abstract when every fun() are static
 
     @Provides //Create object rims
     //NOTE: If the this method doesn't dependent on any instance state of the module , then we can make it static for better performance

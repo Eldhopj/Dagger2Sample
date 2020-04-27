@@ -7,7 +7,7 @@ import com.eldhopj.dagger2sample.wheel.Wheels;
 
 import javax.inject.Inject;
 
-public class Car {
+public class Vehicle {
     private static final String TAG = "Car";
 
     private Engine engine;
@@ -18,12 +18,13 @@ public class Car {
     //CONSTRUCTOR INJECTION
     //NOTE : can only one constructor to be annotated with @Inject
     @Inject // This will create an object for Car
-    public Car(Engine engine, Wheels wheels) {
+    public Vehicle(Engine engine, Wheels wheels) {
         this.engine = engine;
         this.wheels = wheels;
     }
 
     public void drive() {
+        engine.start();
         Log.d(TAG, "driving...");
     }
 }
