@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.eldhopj.dagger2sample.faclitator.BikeComponent;
 import com.eldhopj.dagger2sample.faclitator.CarComponent;
 import com.eldhopj.dagger2sample.faclitator.DaggerBikeComponent;
+import com.eldhopj.dagger2sample.faclitator.DaggerCarComponent;
 import com.eldhopj.dagger2sample.faclitator.DaggerElectricCarComponent;
 import com.eldhopj.dagger2sample.faclitator.ElectricCarComponent;
 import com.eldhopj.dagger2sample.provider.engineModules.PetrolEngineModule;
@@ -31,10 +32,18 @@ public class MainActivity extends AppCompatActivity {
      *      but we also have to annotate @Component class also
      *      Note : if we can annotate the base class (PetrolEngine,DieselEngine...) better annotate the class,
      *              Else annotate in there @Provides method (WheelsModule)
-     *      Issue : Singleton annotation only works for the same component ,
+     *      Issue 1: Singleton annotation only works for the same component ,
      *              if we use multiple component or initialize same component multiple times it will create multiple objects
-     *      Issue : It will create new objects if there is any orientation change happens
+     *      Issue 2: It will create new objects if there is any orientation change happens
+     *CUSTOM SCOPES & COMPONENT DEPENDENCIES :
+     *      The issues 2 (object creation on orientation changes)with @Singleton is fixed with this , use this for object needed through out runtime like obj of retrofit
+     *               Sample : Created DriverComponent in application class
+     *      Preventing creation of multiple instances in the lifecycle of an activity or a fragment
      *
+     *      When we have to create a singleton just for the lifetime of an activity/fragment and also needed some other objects app wide singleton
+     *              Sample : { DriverComponent :ie Driver object is app wide singleton & CarComponent : i,e the object created from CarComponent is Vehicle will only have activity level singleton}
+     *              NOTE 1 :  We have to pass the dependency component ()
+     *                     and On runtime value injection using Builder, we have to define the dependency in Builder also
      */
 
     @Inject
@@ -44,10 +53,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //CarComponent component = DaggerCarComponent.create(); // DaggerCarComponent contains all the necessary codes for creating the car
-        //provisionMethod(component);
+        CarComponent component = DaggerCarComponent.builder().
+                driverComponent(((DaggerApplication) getApplication()).
+                        getDriverComponent()).build(); /** We have to pass the dependency component */
+        provisionMethod(component);
         //fieldInjection(component);
         //injectValueRuntime(125);
-        valueInjectionUsingBindsInstance(50000,4000);
+        //valueInjectionUsingBindsInstance(50000,4000);
     }
 
     /**
@@ -63,9 +75,10 @@ public class MainActivity extends AppCompatActivity {
         Vehicle vehicle;
         vehicle = component.getCar();  // get object for vehicle
         vehicle.drive();
+        vehicle.drive();
     }
 
-    private void injectValueRuntime (int cc) {
+    private void injectValueRuntime (int cc) { // Without using Builder
         BikeComponent component = DaggerBikeComponent.builder()
                 .petrolEngineModule(new PetrolEngineModule(cc))  // Passing value while creating component
                 .build();
@@ -79,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         ElectricCarComponent component = DaggerElectricCarComponent.builder()
                 .batteryCapacity(batteryCap)
                 .torque(torque)
+                .driverComponent(((DaggerApplication) getApplication()).getDriverComponent()) // Dependency
                 .build();
 
         component.inject(this); // Field injection for getting vehicle object

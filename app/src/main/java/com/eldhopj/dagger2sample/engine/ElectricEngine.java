@@ -2,11 +2,12 @@ package com.eldhopj.dagger2sample.engine;
 
 import android.util.Log;
 
+import com.eldhopj.dagger2sample.scope.PerActivity;
+
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Singleton;
 
-@Singleton
+@PerActivity
 public class ElectricEngine implements Engine {
     private static final String TAG = "Car";
 
