@@ -6,9 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.eldhopj.dagger2sample.faclitator.BikeComponent;
 import com.eldhopj.dagger2sample.faclitator.CarComponent;
-import com.eldhopj.dagger2sample.faclitator.DaggerBikeComponent;
-import com.eldhopj.dagger2sample.faclitator.DaggerCarComponent;
-import com.eldhopj.dagger2sample.faclitator.DaggerElectricCarComponent;
 import com.eldhopj.dagger2sample.faclitator.ElectricCarComponent;
 import com.eldhopj.dagger2sample.provider.engineModules.PetrolEngineModule;
 
@@ -44,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
      *              Sample : { DriverComponent :ie Driver object is app wide singleton & CarComponent : i,e the object created from CarComponent is Vehicle will only have activity level singleton}
      *              NOTE 1 :  We have to pass the dependency component ()
      *                     and On runtime value injection using Builder, we have to define the dependency in Builder also
+     *SUBCOMPONENTS  : Fix the issue of NOTE 1( passing of dependency )
+     *                 We can use SubComponent instead of passing dependency
+     *                          SubComponent can access all the objects of parent component
+     *
      */
 
     @Inject
@@ -53,14 +54,32 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //CarComponent component = DaggerCarComponent.create(); // DaggerCarComponent contains all the necessary codes for creating the car
-        CarComponent component = DaggerCarComponent.builder().
-                driverComponent(((DaggerApplication) getApplication()).
-                        getDriverComponent()).build(); /** We have to pass the dependency component */
-        provisionMethod(component);
-        //fieldInjection(component);
+
+        provisionMethod(getParentComponentOfCar());
+        //fieldInjection(getCarComponent());
         //injectValueRuntime(125);
-        //valueInjectionUsingBindsInstance(50000,4000);
+        valueInjectionUsingBindsInstance(50000,4000);
     }
+
+//    private CarComponent getCarComponentPassingDependency () {
+//        CarComponent component = DaggerCarComponent.builder().
+//                driverComponent(((DaggerApplication) getApplication()).
+//                        getDriverComponent()).build(); /** We have to pass the dependency component */
+//                        return component;
+//    }
+
+    private CarComponent getParentComponentOfCar() {
+        // DriverComponent is the parent component of CarComponent from there we get CarComponent
+        //TIP : Class which is gonna be dependent , make it as parent and others Subcomponent
+        CarComponent component = ((DaggerApplication) getApplication()).
+                getDriverComponent().getCarComponent();
+        return component;
+    }
+
+//    private CarComponent getCarComponent() {
+//        CarComponent component = DaggerCarComponent.create(); // DaggerCarComponent contains all the necessary codes for creating the car
+//        return component;
+//    }
 
     /**
      * Field injection is for framework types, like activates and fragments where we cant make constructor
@@ -79,20 +98,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void injectValueRuntime (int cc) { // Without using Builder
-        BikeComponent component = DaggerBikeComponent.builder()
-                .petrolEngineModule(new PetrolEngineModule(cc))  // Passing value while creating component
-                .build();
 
+//        BikeComponent component = DaggerBikeComponent.builder()
+//                .petrolEngineModule(new PetrolEngineModule(cc))  // Passing value while creating component
+//                .build();
+
+        BikeComponent component = ((DaggerApplication) getApplication()).
+                getDriverComponent().getBikeComponent(new PetrolEngineModule(cc));// Passing value while creating component
         component.inject(this); // Field injection for getting vehicle object
         vehicle.drive();
     }
 
     // This is much more efficient way of passing value at runtime
     private void valueInjectionUsingBindsInstance (int batteryCap, int torque) {
-        ElectricCarComponent component = DaggerElectricCarComponent.builder()
+//        ElectricCarComponent component = DaggerElectricCarComponent.builder()
+//                .batteryCapacity(batteryCap)
+//                .torque(torque)
+//                .driverComponent(((DaggerApplication) getApplication()).getDriverComponent()) // Dependency
+//                .build();
+
+        ElectricCarComponent component = ((DaggerApplication) getApplication()).
+                getDriverComponent().getElectricCarComponentBuilder()
                 .batteryCapacity(batteryCap)
                 .torque(torque)
-                .driverComponent(((DaggerApplication) getApplication()).getDriverComponent()) // Dependency
                 .build();
 
         component.inject(this); // Field injection for getting vehicle object
